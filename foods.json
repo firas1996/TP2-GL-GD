@@ -1,0 +1,9 @@
+[
+  { "id": 1, "name": "pizza", "cal": 123 },
+  { "id": 2, "name": "pasta", "cal": 321 },
+  { "id": 3, "name": "salad", "cal": 50 },
+  { "id": 5, "name": "test", "cal": 4554545 },
+  { "id": 6, "name": "test", "cal": 4554545 },
+  { "id": 7, "name": "test", "cal": 4554545 },
+  { "id": 8, "name": "test", "cal": 4554545 }
+]
