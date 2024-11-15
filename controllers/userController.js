@@ -19,7 +19,13 @@ exports.createUser = async (req, res) => {
 
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    // const users = await User.find().where("name").equals(req.query.name);
+    let extraQuery = ["sort", "page", "limit"];
+    let queryObj = { ...req.query };
+    console.log("aa", queryObj);
+    extraQuery.forEach((el) => delete queryObj[el]);
+    console.log("bb", queryObj);
+    const users = await User.find(queryObj);
     res.status(200).json({
       message: "Users fetched !!!",
       results: users.length,

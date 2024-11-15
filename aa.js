@@ -7,4 +7,4 @@ let d = {
 let e = { ...d };
 e.abc = "azerty";
 
-console.log(d);
+console.log(e);
