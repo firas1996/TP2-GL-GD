@@ -25,6 +25,9 @@ exports.getAllUsers = async (req, res) => {
     console.log("aa", queryObj);
     extraQuery.forEach((el) => delete queryObj[el]);
     console.log("bb", queryObj);
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(gt | gte | lt | let, (x) => `$${x}`);
+    queryObj = JSON.parse(queryStr);
     const users = await User.find(queryObj);
     res.status(200).json({
       message: "Users fetched !!!",
