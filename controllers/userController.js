@@ -54,12 +54,28 @@ exports.getUserById = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   try {
-    const user = await User.findByIdAndUpdate(req.params.id, req.body);
+    const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
     res.status(200).json({
       message: "Users Updated !!!",
       data: {
         user,
       },
+    });
+  } catch (err) {
+    res.status(400).json({
+      message: "fail",
+      err,
+    });
+  }
+};
+
+exports.deleteUser = async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.params.id);
+    res.status(203).json({
+      message: "Users Deleted !!!",
     });
   } catch (err) {
     res.status(400).json({
