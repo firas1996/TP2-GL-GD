@@ -40,6 +40,14 @@ exports.getAllUsers = async (req, res) => {
         message: "404",
       });
     }
+    // 3) Sorting:
+    if (req.query.sort) {
+      const sortBy = req.query.sort.split(",").join(" ");
+      querry = querry.sort(sortBy);
+    } else {
+      console.log("aa");
+      querry = querry.sort("-created_at");
+    }
     const users = await querry;
     res.status(200).json({
       message: "Users fetched !!!",
