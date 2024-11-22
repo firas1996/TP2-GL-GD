@@ -22,13 +22,25 @@ exports.getAllUsers = async (req, res) => {
     // const users = await User.find().where("name").equals(req.query.name);
     let extraQuery = ["sort", "page", "limit"];
     let queryObj = { ...req.query };
-    console.log("aa", queryObj);
     extraQuery.forEach((el) => delete queryObj[el]);
-    console.log("bb", queryObj);
+    // 1) Filtring:
     let queryStr = JSON.stringify(queryObj);
-    queryStr = queryStr.replace(gt | gte | lt | let, (x) => `$${x}`);
+    queryStr = queryStr.replace(/\b(gt|gte|lt|let)\b/g, (x) => `$${x}`);
     queryObj = JSON.parse(queryStr);
-    const users = await User.find(queryObj);
+    let querry = User.find(queryObj);
+    // 2) Pagination:
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit || 2;
+    const skip = (page - 1) * limit;
+    querry = querry.skip(skip).limit(limit);
+    const nbrUsers = await User.countDocuments();
+    if (nbrUsers <= skip) {
+      // throw new Error("This page in not .....");
+      res.status(404).json({
+        message: "404",
+      });
+    }
+    const users = await querry;
     res.status(200).json({
       message: "Users fetched !!!",
       results: users.length,
