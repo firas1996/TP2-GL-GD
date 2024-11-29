@@ -1,4 +1,5 @@
 const User = require("../models/userModel");
+const APIFeatures = require("../utils/APIFeatures");
 
 exports.createUser = async (req, res) => {
   try {
@@ -19,36 +20,17 @@ exports.createUser = async (req, res) => {
 
 exports.getAllUsers = async (req, res) => {
   try {
-    // const users = await User.find().where("name").equals(req.query.name);
-    let extraQuery = ["sort", "page", "limit"];
-    let queryObj = { ...req.query };
-    extraQuery.forEach((el) => delete queryObj[el]);
-    // 1) Filtring:
-    let queryStr = JSON.stringify(queryObj);
-    queryStr = queryStr.replace(/\b(gt|gte|lt|let)\b/g, (x) => `$${x}`);
-    queryObj = JSON.parse(queryStr);
-    let querry = User.find(queryObj);
-    // 2) Pagination:
-    const page = req.query.page * 1 || 1;
-    const limit = req.query.limit || 2;
-    const skip = (page - 1) * limit;
-    querry = querry.skip(skip).limit(limit);
-    const nbrUsers = await User.countDocuments();
-    if (nbrUsers <= skip) {
-      // throw new Error("This page in not .....");
+    const features = new APIFeatures(User.find(), req.query)
+      .filter()
+      .sort()
+      .pagination();
+
+    const users = await features.queryData;
+    if (users.length === 0) {
       res.status(404).json({
-        message: "404",
+        message: "this page does not exist yet !!!",
       });
     }
-    // 3) Sorting:
-    if (req.query.sort) {
-      const sortBy = req.query.sort.split(",").join(" ");
-      querry = querry.sort(sortBy);
-    } else {
-      console.log("aa");
-      querry = querry.sort("-created_at");
-    }
-    const users = await querry;
     res.status(200).json({
       message: "Users fetched !!!",
       results: users.length,
