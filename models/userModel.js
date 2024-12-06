@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const bcrypt = require("bcryptjs");
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -16,7 +17,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "The password is required"],
     minlength: 8,
-    // select: false,
+    select: false,
   },
   confirmPassword: {
     type: String,
@@ -40,5 +41,6 @@ const userSchema = new mongoose.Schema({
     select: false,
   },
 });
+userSchema.pre("save", async function (next) {});
 const User = mongoose.model("User", userSchema);
 module.exports = User;
