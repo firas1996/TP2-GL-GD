@@ -60,3 +60,24 @@ exports.signin = async (req, res) => {
     });
   }
 };
+
+exports.protectorMW = async (req, res, next) => {
+  try {
+    let token;
+
+    // 1) vérifier si l'utilisateur est connecter ou bien non
+
+    // 2) vérifier la validité du token
+
+    // 3) vérifier si l'utilisateur est toujour existe
+
+    // 4) vérifier si la token et générer apres ou avant la modification du pass
+
+    next();
+  } catch (error) {
+    res.status(400).json({
+      message: "fail",
+      error,
+    });
+  }
+};

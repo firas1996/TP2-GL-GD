@@ -40,6 +40,11 @@ const userSchema = new mongoose.Schema({
     default: Date.now(),
     select: false,
   },
+  pass_update_date: {
+    type: Date,
+    default: Date.now(),
+    select: false,
+  },
 });
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
