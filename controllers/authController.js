@@ -106,7 +106,7 @@ exports.protectorMW = async (req, res, next) => {
         message: "token no longer valid !!!",
       });
     }
-
+    req.role = user.role;
     next();
   } catch (error) {
     res.status(400).json({
@@ -114,4 +114,23 @@ exports.protectorMW = async (req, res, next) => {
       error,
     });
   }
+};
+
+exports.verifyRole = (...roles) => {
+  return async (req, res, next) => {
+    console.log(req.role);
+    try {
+      if (!roles.includes(req.role)) {
+        return res.status(401).json({
+          message: "you are not authorized !!!",
+        });
+      }
+      next();
+    } catch (error) {
+      res.status(400).json({
+        message: "fail",
+        error,
+      });
+    }
+  };
 };
