@@ -1,5 +1,7 @@
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
+const { promisify } = require("util");
+
 const createToken = (id, name) => {
   return jwt.sign({ id, name }, process.env.JWT_SECRET_KEY, {
     expiresIn: "90d",
@@ -67,11 +69,43 @@ exports.protectorMW = async (req, res, next) => {
 
     // 1) vérifier si l'utilisateur est connecter ou bien non
 
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer")
+    ) {
+      token = req.headers.authorization.split(" ")[1];
+    }
+    if (!token) {
+      return res.status(401).json({
+        message: "You are not logged in !!!",
+      });
+    }
+
     // 2) vérifier la validité du token
+
+    const decoded = await promisify(jwt.verify)(
+      token,
+      process.env.JWT_SECRET_KEY
+    );
+    console.log(decoded);
 
     // 3) vérifier si l'utilisateur est toujour existe
 
+    const user = await User.findById(decoded.id).select("+pass_update_date");
+
+    if (!user) {
+      return res.status(401).json({
+        message: "the user belonging to this token no longer exist !!!",
+      });
+    }
+
     // 4) vérifier si la token et générer apres ou avant la modification du pass
+
+    if (!user.changedPasswordTime(decoded.iat, user.pass_update_date)) {
+      return res.status(401).json({
+        message: "token no longer valid !!!",
+      });
+    }
 
     next();
   } catch (error) {

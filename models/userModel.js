@@ -57,5 +57,9 @@ userSchema.pre("save", async function (next) {
 userSchema.methods.validPass = async function (entredPass, criptedPass) {
   return bcrypt.compare(entredPass, criptedPass);
 };
+
+userSchema.methods.changedPasswordTime = function (JWTiat, pass) {
+  return JWTiat > parseInt(pass.getTime() / 1000);
+};
 const User = mongoose.model("User", userSchema);
 module.exports = User;
